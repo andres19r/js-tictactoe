@@ -1,0 +1,16 @@
+body {
+	margin: 0;
+	padding: 0;
+}
+
+.board {
+	border: 1px solid black;
+	width: 500px;
+	height: 500px;
+	display: grid;
+	grid-template: repeat(3,1fr) / repeat(3,1fr);
+}
+
+.grid {
+	border: 1px solid blue;
+}

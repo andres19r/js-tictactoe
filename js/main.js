@@ -128,7 +128,9 @@ const gameBoard = ((player1, player2) => {
 
 grids.forEach((grid) => {
   grid.addEventListener("click", () => {
-    gameBoard.playGame(grid.id);
+    if (grid.textContent === "") {
+      gameBoard.playGame(grid.id);
+    }
   });
 });
 

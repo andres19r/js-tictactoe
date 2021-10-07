@@ -35,7 +35,6 @@ h2 {
   margin: 0 auto;
 }
 .grid {
-  cursor: pointer;
 	display: flex;
 	justify-content: center; 
 	align-items: center; 

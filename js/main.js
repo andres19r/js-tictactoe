@@ -15,6 +15,7 @@ const playBtn = document.getElementById("btn-play");
 let sw = -1;
 name1.value = "";
 name2.value = "";
+name1.focus();
 
 const player = (name, mark) => {
   return { name, mark };
@@ -24,33 +25,45 @@ const player2 = player(name2.value, "O");
 turn.textContent = "Insert your names to play!";
 
 playBtn.addEventListener("click", () => {
-  if (name1.value !== "" && name2.value !== "") {
+  if (name1.value !== "" && name2.value !== "" && sw === -1) {
     playBtn.textContent = "Restart Game";
     name1.disabled = true;
     name2.disabled = true;
     player1.name = name1.value;
     player2.name = name2.value;
     turn.textContent = `${player1.name}'s turn`;
-    addGrids()
+    addGrids();
+    sw += 1;
+  } else {
+    sw = -1;
+    playBtn.textContent = "Start Game";
+    name1.disabled = false;
+    name2.disabled = false;
+    name1.value = "";
+    name2.value = "";
+    name1.focus();
+    displayController.clearBoard();
+    displayController.renderGameBoard();
+    turn.textContent = "Insert your names to play!";
   }
 });
 
 const gameBoard = ((player1, player2) => {
   const playGame = (spot) => {
     if (sw % 2 === 0) {
-      turn.textContent = `${player1.name}'s turn`;
+      turn.textContent = `${player2.name}'s turn`;
       addMark(player1, spot);
       checkWinner(player1);
       checkDraw();
     } else {
-      turn.textContent = `${player2.name}'s turn`;
+      turn.textContent = `${player1.name}'s turn`;
       addMark(player2, spot);
       checkWinner(player2);
       checkDraw();
     }
     sw += 1;
   };
-  const board = {
+  let board = {
     row1: ["", "", ""],
     row2: ["", "", ""],
     row3: ["", "", ""],
@@ -145,6 +158,7 @@ const gameBoard = ((player1, player2) => {
 
 function addGrids() {
   grids.forEach((grid) => {
+    grid.style.cursor = 'pointer'
     grid.addEventListener("click", () => {
       if (grid.textContent === "") {
         gameBoard.playGame(grid.id);
@@ -155,18 +169,25 @@ function addGrids() {
 
 const displayController = (() => {
   const renderGameBoard = () => {
-    div1.textContent = gameBoard.board[0][0];
-    div2.textContent = gameBoard.board[0][1];
-    div3.textContent = gameBoard.board[0][2];
-    div4.textContent = gameBoard.board[1][0];
-    div5.textContent = gameBoard.board[1][1];
-    div6.textContent = gameBoard.board[1][2];
-    div7.textContent = gameBoard.board[2][0];
-    div8.textContent = gameBoard.board[2][1];
-    div9.textContent = gameBoard.board[2][2];
+    div1.textContent = gameBoard.board.row1[0];
+    div2.textContent = gameBoard.board.row1[1];
+    div3.textContent = gameBoard.board.row1[2];
+    div4.textContent = gameBoard.board.row2[0];
+    div5.textContent = gameBoard.board.row2[1];
+    div6.textContent = gameBoard.board.row2[2];
+    div7.textContent = gameBoard.board.row3[0];
+    div8.textContent = gameBoard.board.row3[1];
+    div9.textContent = gameBoard.board.row3[2];
+  };
+  const clearBoard = () => {
+    gameBoard.board = {
+      row1: ["", "", ""],
+      row2: ["", "", ""],
+      row3: ["", "", ""],
+    };
   };
 
-  return { renderGameBoard };
+  return { renderGameBoard, clearBoard };
 })();
 
-displayController.renderGameBoard;
+displayController.renderGameBoard();

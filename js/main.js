@@ -9,24 +9,41 @@ const div8 = document.getElementById("8");
 const div9 = document.getElementById("9");
 const grids = document.querySelectorAll(".grid");
 const turn = document.getElementById("turn");
-let sw = 0;
+const name1 = document.getElementById("name1");
+const name2 = document.getElementById("name2");
+const playBtn = document.getElementById("btn-play");
+let sw = -1;
+name1.value = "";
+name2.value = "";
 
 const player = (name, mark) => {
   return { name, mark };
 };
+const player1 = player(name1.value, "X");
+const player2 = player(name2.value, "O");
+turn.textContent = "Insert your names to play!";
 
-const player1 = player("Andres", "X");
-const player2 = player("Eduardo", "O");
+playBtn.addEventListener("click", () => {
+  if (name1.value !== "" && name2.value !== "") {
+    playBtn.textContent = "Restart Game";
+    name1.disabled = true;
+    name2.disabled = true;
+    player1.name = name1.value;
+    player2.name = name2.value;
+    turn.textContent = `${player1.name}'s turn`;
+    addGrids()
+  }
+});
 
 const gameBoard = ((player1, player2) => {
   const playGame = (spot) => {
     if (sw % 2 === 0) {
-      turn.textContent = "Player 2";
+      turn.textContent = `${player1.name}'s turn`;
       addMark(player1, spot);
       checkWinner(player1);
       checkDraw();
     } else {
-      turn.textContent = "Player 1";
+      turn.textContent = `${player2.name}'s turn`;
       addMark(player2, spot);
       checkWinner(player2);
       checkDraw();
@@ -77,7 +94,7 @@ const gameBoard = ((player1, player2) => {
     for (const row in board) {
       for (let i = 0; i < board[row].length; i++) {
         if (board[row][i] === "") {
-          return false
+          return false;
         }
       }
     }
@@ -126,13 +143,15 @@ const gameBoard = ((player1, player2) => {
   return { board, addMark, playGame };
 })(player1, player2);
 
-grids.forEach((grid) => {
-  grid.addEventListener("click", () => {
-    if (grid.textContent === "") {
-      gameBoard.playGame(grid.id);
-    }
+function addGrids() {
+  grids.forEach((grid) => {
+    grid.addEventListener("click", () => {
+      if (grid.textContent === "") {
+        gameBoard.playGame(grid.id);
+      }
+    });
   });
-});
+}
 
 const displayController = (() => {
   const renderGameBoard = () => {

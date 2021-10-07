@@ -8,7 +8,26 @@ h1, h2 {
 h2 {
 	margin-bottom: 50px;
 }
+.container {
+  display: flex;
+  justify-content: space-around;
+}
+.form {
+  width: 30%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+#btn-play{
+  display: block;
+  width: 200px;
+  margin-top: 20px;
+}
+.message {
+  width: 30%;
+}
 .board {
+  width: 30%;
   width: 400px;
   height: 400px;
   display: grid;
@@ -18,8 +37,8 @@ h2 {
 .grid {
   cursor: pointer;
 	display: flex;
-	justify-content: center; /* align horizontal */
-	align-items: center; /* align vertical */
+	justify-content: center; 
+	align-items: center; 
 	font-size: 2em;
 }
 .one {

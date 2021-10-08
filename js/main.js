@@ -12,6 +12,7 @@ const turn = document.getElementById("turn");
 const name1 = document.getElementById("name1");
 const name2 = document.getElementById("name2");
 const playBtn = document.getElementById("btn-play");
+const restartBtn = document.getElementById("btn-restart");
 let sw = -1;
 name1.value = "";
 name2.value = "";
@@ -26,7 +27,8 @@ turn.textContent = "Insert your names to play!";
 
 playBtn.addEventListener("click", () => {
   if (name1.value !== "" && name2.value !== "" && sw === -1) {
-    playBtn.textContent = "Restart Game";
+    playBtn.disabled = true;
+    restartBtn.disabled = false;
     name1.disabled = true;
     name2.disabled = true;
     player1.name = name1.value;
@@ -34,18 +36,34 @@ playBtn.addEventListener("click", () => {
     turn.textContent = `${player1.name}'s turn`;
     addGrids();
     sw += 1;
-  } else {
-    sw = -1;
-    playBtn.textContent = "Start Game";
-    name1.disabled = false;
-    name2.disabled = false;
-    name1.value = "";
-    name2.value = "";
-    name1.focus();
-    displayController.clearBoard();
-    displayController.renderGameBoard();
-    turn.textContent = "Insert your names to play!";
+  } else if (name1.value !== "" && name2.value === "") {
+    turn.textContent = "Play against the AI";
+    name1.disabled = true;
+    name2.disabled = true;
+    playBtn.disabled = true;
+    restartBtn.disabled = false;
+    player1.name = name1.value;
+    player2.name = "AI";
+    addGridsAI();
+    sw += 1;
   }
+});
+
+restartBtn.addEventListener("click", () => {
+  playBtn.disabled = false;
+  restartBtn.disabled = true;
+  sw = -1;
+  name1.disabled = false;
+  name2.disabled = false;
+  name1.value = "";
+  name2.value = "";
+  name1.focus();
+  displayController.clearBoard();
+  displayController.renderGameBoard();
+  turn.textContent = "Insert your names to play!";
+  player1.name = "";
+  player2.name = "";
+  removeGrids();
 });
 
 const gameBoard = ((player1, player2) => {
@@ -62,6 +80,50 @@ const gameBoard = ((player1, player2) => {
       checkDraw();
     }
     sw += 1;
+  };
+  const playGameAI = (spot) => {
+    addMark(player1, spot);
+    let aiMove = checkAiMove();
+    while (aiMove === false) {
+      aiMove = checkAiMove();
+    }
+    checkWinner(player1);
+    addMark(player2, aiMove);
+    checkWinner(player2);
+    checkDraw();
+  };
+  const checkAiMove = () => {
+    const move = getRandomInt(1, 10);
+    switch (move) {
+      case 1:
+        if (board.row1[0] !== "") return false;
+        break;
+      case 2:
+        if (board.row1[1] !== "") return false;
+        break;
+      case 3:
+        if (board.row1[2] !== "") return false;
+        break;
+      case 4:
+        if (board.row2[0] !== "") return false;
+        break;
+      case 5:
+        if (board.row2[1] !== "") return false;
+        break;
+      case 6:
+        if (board.row2[2] !== "") return false;
+        break;
+      case 7:
+        if (board.row3[0] !== "") return false;
+        break;
+      case 8:
+        if (board.row3[1] !== "") return false;
+        break;
+      case 9:
+        if (board.row3[2] === "") return false;
+        break;
+    }
+    return move;
   };
   let board = {
     row1: ["", "", ""],
@@ -153,13 +215,35 @@ const gameBoard = ((player1, player2) => {
         break;
     }
   };
-  return { board, addMark, playGame };
+  return { board, addMark, playGame, playGameAI };
 })(player1, player2);
 
 function addGrids() {
   grids.forEach((grid) => {
-    grid.style.cursor = 'pointer'
+    grid.style.cursor = "pointer";
     grid.addEventListener("click", () => {
+      if (grid.textContent === "") {
+        gameBoard.playGame(grid.id);
+      }
+    });
+  });
+}
+
+function addGridsAI() {
+  grids.forEach((grid) => {
+    grid.style.cursor = "pointer";
+    grid.addEventListener("click", () => {
+      if (grid.textContent === "") {
+        gameBoard.playGameAI(grid.id);
+      }
+    });
+  });
+}
+
+function removeGrids() {
+  grids.forEach((grid) => {
+    grid.style.cursor = "auto";
+    grid.removeEventListener("click", () => {
       if (grid.textContent === "") {
         gameBoard.playGame(grid.id);
       }
@@ -189,5 +273,9 @@ const displayController = (() => {
 
   return { renderGameBoard, clearBoard };
 })();
+
+function getRandomInt(min, max) {
+  return Math.floor(Math.random() * (max - min)) + min;
+}
 
 displayController.renderGameBoard();

@@ -67,6 +67,7 @@ restartBtn.addEventListener("click", () => {
 });
 
 const gameBoard = ((player1, player2) => {
+  let winner = false;
   const playGame = (spot) => {
     if (sw % 2 === 0) {
       turn.textContent = `${player2.name}'s turn`;
@@ -88,9 +89,12 @@ const gameBoard = ((player1, player2) => {
       aiMove = checkAiMove();
     }
     checkWinner(player1);
-    addMark(player2, aiMove);
-    checkWinner(player2);
     checkDraw();
+    if (winner === false) {
+      addMark(player2, aiMove);
+      checkWinner(player2);
+      checkDraw();
+    }
   };
   const checkAiMove = () => {
     const move = getRandomInt(1, 10);
@@ -132,7 +136,7 @@ const gameBoard = ((player1, player2) => {
   };
   const checkDraw = () => {
     if (fullBoard()) {
-      turn.textContent = "It's a draw!";
+      turn.textContent = "It's a tie!";
     }
   };
   const checkWinner = (player) => {
@@ -163,6 +167,7 @@ const gameBoard = ((player1, player2) => {
         board.row3[0] === player.mark)
     ) {
       turn.textContent = `${player.name} wins!`;
+      winner = true;
     }
   };
   const fullBoard = () => {

@@ -100,40 +100,40 @@ const gameBoard = ((player1, player2) => {
     const move = getRandomInt(1, 10);
     switch (move) {
       case 1:
-        if (board.row1[0] !== "") return false;
+        if (board[0][0] !== "") return false;
         break;
       case 2:
-        if (board.row1[1] !== "") return false;
+        if (board[0][1] !== "") return false;
         break;
       case 3:
-        if (board.row1[2] !== "") return false;
+        if (board[0][2] !== "") return false;
         break;
       case 4:
-        if (board.row2[0] !== "") return false;
+        if (board[1][0] !== "") return false;
         break;
       case 5:
-        if (board.row2[1] !== "") return false;
+        if (board[1][1] !== "") return false;
         break;
       case 6:
-        if (board.row2[2] !== "") return false;
+        if (board[1][2] !== "") return false;
         break;
       case 7:
-        if (board.row3[0] !== "") return false;
+        if (board[2][0] !== "") return false;
         break;
       case 8:
-        if (board.row3[1] !== "") return false;
+        if (board[2][1] !== "") return false;
         break;
       case 9:
-        if (board.row3[2] === "") return false;
+        if (board[2][2] === "") return false;
         break;
     }
     return move;
   };
-  let board = {
-    row1: ["", "", ""],
-    row2: ["", "", ""],
-    row3: ["", "", ""],
-  };
+  let board = [
+    ["", "", ""],
+    ["", "", ""],
+    ["", "", ""],
+  ];
   const checkDraw = () => {
     if (fullBoard()) {
       turn.textContent = "It's a tie!";
@@ -141,39 +141,39 @@ const gameBoard = ((player1, player2) => {
   };
   const checkWinner = (player) => {
     if (
-      (board.row1[0] === player.mark &&
-        board.row1[1] === player.mark &&
-        board.row1[2] === player.mark) ||
-      (board.row2[0] === player.mark &&
-        board.row2[1] === player.mark &&
-        board.row2[2] === player.mark) ||
-      (board.row3[0] === player.mark &&
-        board.row3[1] === player.mark &&
-        board.row3[2] === player.mark) ||
-      (board.row1[0] === player.mark &&
-        board.row2[0] === player.mark &&
-        board.row3[0] === player.mark) ||
-      (board.row1[1] === player.mark &&
-        board.row2[1] === player.mark &&
-        board.row3[1] === player.mark) ||
-      (board.row1[2] === player.mark &&
-        board.row2[2] === player.mark &&
-        board.row3[2] === player.mark) ||
-      (board.row1[0] === player.mark &&
-        board.row2[1] === player.mark &&
-        board.row3[2] === player.mark) ||
-      (board.row1[2] === player.mark &&
-        board.row2[1] === player.mark &&
-        board.row3[0] === player.mark)
+      (board[0][0] === player.mark &&
+        board[0][1] === player.mark &&
+        board[0][2] === player.mark) ||
+      (board[1][0] === player.mark &&
+        board[1][1] === player.mark &&
+        board[1][2] === player.mark) ||
+      (board[2][0] === player.mark &&
+        board[2][1] === player.mark &&
+        board[2][2] === player.mark) ||
+      (board[0][0] === player.mark &&
+        board[1][0] === player.mark &&
+        board[2][0] === player.mark) ||
+      (board[0][1] === player.mark &&
+        board[1][1] === player.mark &&
+        board[2][1] === player.mark) ||
+      (board[0][2] === player.mark &&
+        board[1][2] === player.mark &&
+        board[2][2] === player.mark) ||
+      (board[0][0] === player.mark &&
+        board[1][1] === player.mark &&
+        board[2][2] === player.mark) ||
+      (board[0][2] === player.mark &&
+        board[1][1] === player.mark &&
+        board[2][0] === player.mark)
     ) {
       turn.textContent = `${player.name} wins!`;
       winner = true;
     }
   };
   const fullBoard = () => {
-    for (const row in board) {
-      for (let i = 0; i < board[row].length; i++) {
-        if (board[row][i] === "") {
+    for (let i = 0; i < 3; i++) {
+      for (let j = 0; j < 3; j++) {
+        if (board[i][j] === "") {
           return false;
         }
       }
@@ -183,39 +183,39 @@ const gameBoard = ((player1, player2) => {
   const addMark = (player, spot) => {
     switch (parseInt(spot)) {
       case 1:
-        board.row1[0] = player.mark;
+        board[0][0] = player.mark;
         div1.textContent = player.mark;
         break;
       case 2:
-        board.row1[1] = player.mark;
+        board[0][1] = player.mark;
         div2.textContent = player.mark;
         break;
       case 3:
-        board.row1[2] = player.mark;
+        board[0][2] = player.mark;
         div3.textContent = player.mark;
         break;
       case 4:
-        board.row2[0] = player.mark;
+        board[1][0] = player.mark;
         div4.textContent = player.mark;
         break;
       case 5:
-        board.row2[1] = player.mark;
+        board[1][1] = player.mark;
         div5.textContent = player.mark;
         break;
       case 6:
-        board.row2[2] = player.mark;
+        board[1][2] = player.mark;
         div6.textContent = player.mark;
         break;
       case 7:
-        board.row3[0] = player.mark;
+        board[2][0] = player.mark;
         div7.textContent = player.mark;
         break;
       case 8:
-        board.row3[1] = player.mark;
+        board[2][1] = player.mark;
         div8.textContent = player.mark;
         break;
       case 9:
-        board.row3[2] = player.mark;
+        board[2][2] = player.mark;
         div9.textContent = player.mark;
         break;
     }
@@ -258,22 +258,22 @@ function removeGrids() {
 
 const displayController = (() => {
   const renderGameBoard = () => {
-    div1.textContent = gameBoard.board.row1[0];
-    div2.textContent = gameBoard.board.row1[1];
-    div3.textContent = gameBoard.board.row1[2];
-    div4.textContent = gameBoard.board.row2[0];
-    div5.textContent = gameBoard.board.row2[1];
-    div6.textContent = gameBoard.board.row2[2];
-    div7.textContent = gameBoard.board.row3[0];
-    div8.textContent = gameBoard.board.row3[1];
-    div9.textContent = gameBoard.board.row3[2];
+    div1.textContent = gameBoard.board[0][0];
+    div2.textContent = gameBoard.board[0][1];
+    div3.textContent = gameBoard.board[0][2];
+    div4.textContent = gameBoard.board[1][0];
+    div5.textContent = gameBoard.board[1][1];
+    div6.textContent = gameBoard.board[1][2];
+    div7.textContent = gameBoard.board[2][0];
+    div8.textContent = gameBoard.board[2][1];
+    div9.textContent = gameBoard.board[2][2];
   };
   const clearBoard = () => {
-    gameBoard.board = {
-      row1: ["", "", ""],
-      row2: ["", "", ""],
-      row3: ["", "", ""],
-    };
+    gameBoard.board = [
+      ["", "", ""],
+      ["", "", ""],
+      ["", "", ""],
+    ];
   };
 
   return { renderGameBoard, clearBoard };
@@ -282,5 +282,9 @@ const displayController = (() => {
 function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min)) + min;
 }
+
+const findBestMove = () => {};
+
+const minmax = () => {};
 
 displayController.renderGameBoard();

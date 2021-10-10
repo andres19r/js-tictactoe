@@ -68,6 +68,11 @@ restartBtn.addEventListener("click", () => {
 
 const gameBoard = ((player1, player2) => {
   let winner = false;
+  let board = [
+    ["", "", ""],
+    ["", "", ""],
+    ["", "", ""],
+  ];
   const playGame = (spot) => {
     if (sw % 2 === 0) {
       turn.textContent = `${player2.name}'s turn`;
@@ -84,56 +89,52 @@ const gameBoard = ((player1, player2) => {
   };
   const playGameAI = (spot) => {
     addMark(player1, spot);
-    let aiMove = checkAiMove();
-    while (aiMove === false) {
-      aiMove = checkAiMove();
-    }
+    let aiMove = findBestMove(board,player1,player2)
     checkWinner(player1);
     checkDraw();
     if (winner === false) {
-      addMark(player2, aiMove);
+      addMarkAI(aiMove, player2);
       checkWinner(player2);
       checkDraw();
     }
   };
-  const checkAiMove = () => {
-    const move = getRandomInt(1, 10);
-    switch (move) {
-      case 1:
-        if (board[0][0] !== "") return false;
-        break;
-      case 2:
-        if (board[0][1] !== "") return false;
-        break;
-      case 3:
-        if (board[0][2] !== "") return false;
-        break;
-      case 4:
-        if (board[1][0] !== "") return false;
-        break;
-      case 5:
-        if (board[1][1] !== "") return false;
-        break;
-      case 6:
-        if (board[1][2] !== "") return false;
-        break;
-      case 7:
-        if (board[2][0] !== "") return false;
-        break;
-      case 8:
-        if (board[2][1] !== "") return false;
-        break;
-      case 9:
-        if (board[2][2] === "") return false;
-        break;
+  const addMarkAI = (move,ai) => {
+    console.log(move)
+    if(move.row===0){
+      if(move.col===0){
+        board[0][0]=ai.mark
+        div1.textContent = ai.mark;
+      }else if(move.col===1){
+        board[0][1]=ai.mark
+        div2.textContent = ai.mark;
+      }else if(move.col===2){
+        board[0][2]=ai.mark
+        div3.textContent = ai.mark;
+      }
+    }else if(move.row===1){
+      if(move.col===0){
+        board[1][0]=ai.mark
+        div4.textContent = ai.mark;
+      }else if(move.col===1){
+        board[1][1]=ai.mark
+        div5.textContent = ai.mark;
+      }else if(move.col===2){
+        board[1][2]=ai.mark
+        div6.textContent = ai.mark;
+      }
+    }else if(move.row===2){
+      if(move.col===0){
+        board[2][0]=ai.mark
+        div7.textContent = ai.mark;
+      }else if(move.col===1){
+        board[2][1]=ai.mark
+        div8.textContent = ai.mark;
+      }else if(move.col===2){
+        board[2][2]=ai.mark
+        div9.textContent = ai.mark;
+      }
     }
-    return move;
-  };
-  let board = [
-    ["", "", ""],
-    ["", "", ""],
-    ["", "", ""],
-  ];
+  }
   const checkDraw = () => {
     if (fullBoard()) {
       turn.textContent = "It's a tie!";
@@ -220,6 +221,95 @@ const gameBoard = ((player1, player2) => {
         break;
     }
   };
+  const isMovesLeft = (board) => {
+    for(let i = 0;i<3;i++){
+      for(let j=0;j<3;j++){
+        if(board[i][j]==='') return true;
+      }
+    }
+    return false
+  }
+  const evaluate = (b,player1,player2) => {
+    for(let row=0;row<3;row++){
+      if(b[row][0] === b[row][1] && b[row][1] === b[row][2]){
+        if(b[row][0]===player1.mark){
+          return +10
+        }else if(b[row][0]===player2.mark){
+          return -10
+        }
+      }
+    }
+    for(let col=0;col<3;col++){
+      if(b[0][col] === b[1][col] && b[1][col] === b[2][col]){
+        if(b[0][col]===player1.mark){
+          return +10
+        }else if(b[0][col]===player2.mark){
+          return -10
+        }
+      }
+    }
+    if(b[0][2] === b[1][1] && b[1][1] === b[2][0]){
+      if(b[0][2] === player1.mark){
+        return +10
+      }else if(b[0][2] === player2.mark){
+        return -10
+      }
+    }
+    return 0
+  }
+  const minimax = (board,depth,isMax,player1,player2) => {
+    let score= evaluate(board,player1,player2)
+    if(score === 10) return score
+    if(score === -10) return score
+    if(isMovesLeft(board)===false) return 0
+    if(isMax){
+      let best = -1000
+      for(let i=0;i<3;i++){
+        for(let j=0;j<3;j++){
+          if(board[i][j]===''){
+            board[i][j] = player1.mark
+            best = Math.max(best, minimax(board,depth+1,!isMax,player1,player2))
+            board[i][j]=''
+          }
+        }
+      }
+      return best
+    }else{
+      let best = 1000
+      for(let i =0;i<3;i++){
+        for(let j=0;j<3;j++){
+          if(board[i][j]===''){
+            board[i][j]=player2.mark
+            best=Math.min(best,minimax(board,depth+1,!isMax,player1,player2))
+            board[i][j]=''
+          }
+        }
+      }
+      return best
+    }
+  }
+  const findBestMove = (board,player1,player2)=>{
+    let bestVal = -1000
+    let bestMove = {
+      row: -1,
+      col: -1
+    }
+    for(let i=0;i<3;i++){
+      for(let j=0;j<3;j++){
+        if(board[i][j]===''){
+          board[i][j]=player1.mark
+          let moveVal = minimax(board,0,false,player1,player2)
+          board[i][j]=''
+          if(moveVal > bestVal){
+            bestMove.row =i
+            bestMove.col=j
+            bestVal=moveVal
+          }
+        }
+      }
+    }
+    return bestMove
+  }
   return { board, addMark, playGame, playGameAI };
 })(player1, player2);
 
@@ -282,9 +372,5 @@ const displayController = (() => {
 function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min)) + min;
 }
-
-const findBestMove = () => {};
-
-const minmax = () => {};
 
 displayController.renderGameBoard();
